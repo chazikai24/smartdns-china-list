@@ -1,0 +1,48 @@
+name: Build SmartDNS Conf
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "33 0 * * *"
+
+env:
+  REPO_URL: https://github.com/felixonmars/dnsmasq-china-list
+  REPO_BRANCH: master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Initialization environment
+      run: sudo -E apt -qq update && sudo -E apt -qq install make && sudo mkdir -p /workdir && sudo chown $USER:$GROUPS /workdir
+
+    - name: Clone source code
+      run: |
+        cd /workdir
+        git clone $REPO_URL -b $REPO_BRANCH dnsmasq-china-list --depth 1
+
+    - name: Compile
+      run: cd /workdir/dnsmasq-china-list && make SERVER=domestic SMARTDNS_SPEEDTEST_MODE=tcp:80 smartdns-domain-rules
+
+    - name: Compile apple_domains
+      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com | grep -Ev "^#|^$" | sed -E 's/^(full:|domain:|keyword:|regexp:)//' | awk -F '@' '{print $1}' | sort -u > apple_domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" apple_domains.txt > apple.domain.smartdns.conf
+    
+    - name: Checkout
+      uses: actions/checkout@master
+      with:
+         token: ${{ secrets.PAT_TOKEN  }}
+
+    - name: Copy files
+      run: cp -rf /workdir/dnsmasq-china-list/*.domain.smartdns.conf ./ 
+      
+    - name: Add & Commit
+      uses: EndBug/add-and-commit@v9.1.4
+            
+    - name: Delete workflow runs
+      uses: Mattraks/delete-workflow-runs@v2
+      with:
+        token: ${{ github.token }}
+        repository: ${{ github.repository }}
+        retain_days: 1
+        keep_minimum_runs: 2
