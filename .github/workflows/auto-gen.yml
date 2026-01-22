@@ -26,7 +26,7 @@ jobs:
       run: cd /workdir/dnsmasq-china-list && make SERVER=domestic SMARTDNS_SPEEDTEST_MODE=tcp:80 smartdns-domain-rules
 
     - name: Compile apple_domains
-      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com | grep -Ev "^#|^$" | sed -E 's/^(full:|domain:|keyword:|regexp:)//' | awk -F '@' '{print $1}' | sort -u > apple_domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" apple_domains.txt > apple.domain.smartdns.conf
+      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/Loyalsoldier/domain-list-custom/refs/heads/release/apple.txt | grep -Ev "^#|^$" | sed -E 's/^(full:|domain:|keyword:|regexp:)//' | awk -F '@' '{print $1}' | sort -u > apple_domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" apple_domains.txt > apple.domain.smartdns.conf
     
     - name: Checkout
       uses: actions/checkout@master
