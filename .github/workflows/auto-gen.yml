@@ -31,16 +31,16 @@ jobs:
         sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" apple.china.raw.txt > apple.china.domain.smartdns.conf 
             
     - name: Compile apple_domains
-      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/Loyalsoldier/domain-list-custom/refs/heads/release/apple.txt | grep -Ev "^#|^$" | sed -E 's/^(full:|domain:|keyword:|regexp:)//' | awk -F '@' '{print $1}' | sort -u > apple_domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" apple_domains.txt > apple.domain.smartdns.conf
+      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/Loyalsoldier/domain-list-custom/refs/heads/release/apple.txt | grep -Ev "^#|^$" | sed -E 's/^(full:|domain:|keyword:|regexp:)//' | awk -F '@' '{print $1}' | sort -u > apple_domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" apple_domains.txt > apple.domain.smartdns.conf
 
     - name: Compile apple_china_domains from DustinWin/ruleset_geodata
-      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/DustinWin/ruleset_geodata/refs/heads/mihomo-ruleset/apple-cn.list | sed -E "s/^[[:space:]]*[-+ .]*//; s/['\"]//g; /^[[:space:]]*$/d; /^#/d" | sort -u > apple_china.domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" apple_china.domains.txt > apple_china.domain.smartdns.conf
+      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/DustinWin/ruleset_geodata/refs/heads/mihomo-ruleset/apple-cn.list | sed -E "s/^[[:space:]]*[-+ .]*//; s/['\"]//g; /^[[:space:]]*$/d; /^#/d" | sort -u > apple_china.domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" apple_china.domains.txt > apple_china.domain.smartdns.conf
 
     - name: Compile microsoft_china_domains from DustinWin/ruleset_geodata
-      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/DustinWin/ruleset_geodata/refs/heads/mihomo-ruleset/microsoft-cn.list | sed -E "s/^[[:space:]]*[-+ .]*//; s/['\"]//g; /^[[:space:]]*$/d; /^#/d" | sort -u > microsoft_china.domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" microsoft_china.domains.txt > microsoft_china.domain.smartdns.conf
+      run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/DustinWin/ruleset_geodata/refs/heads/mihomo-ruleset/microsoft-cn.list | sed -E "s/^[[:space:]]*[-+ .]*//; s/['\"]//g; /^[[:space:]]*$/d; /^#/d" | sort -u > microsoft_china.domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" microsoft_china.domains.txt > microsoft_china.domain.smartdns.conf
 
     - name: Compile chinalist
-      run: cd /workdir/dnsmasq-china-list && wget https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/refs/heads/release/china-list.txt -O chinalist.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -address - -nameserver domestic -ipset china|" chinalist.txt > chinalist.domain.smartdns.conf
+      run: cd /workdir/dnsmasq-china-list && wget https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/refs/heads/release/china-list.txt -O chinalist.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -address -6 -nameserver domestic -ipset china|" chinalist.txt > chinalist.domain.smartdns.conf
 
     - name: Compile again gfwlist
       run: cd /workdir/dnsmasq-china-list && wget https://raw.githubusercontent.com/Loyalsoldier/v2ray-rules-dat/refs/heads/release/gfw.txt -O gfwlist.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode none -nameserver gfw -address \#6|" gfwlist.txt > gfwlist.domain.smartdns.conf
