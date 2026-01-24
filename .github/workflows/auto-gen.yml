@@ -23,10 +23,12 @@ jobs:
         git clone $REPO_URL -b $REPO_BRANCH dnsmasq-china-list --depth 1
 
     - name: Compile #使用环境白名单模式，全局force-AAAA-SOA yes，下述国内域名开启测速与ipv6
-      run: cd /workdir/dnsmasq-china-list && make raw \
-            && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" accelerated-domains.china.raw.txt > accelerated-domains.china.domain.smartdns.conf \
-            && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" google.china.raw.txt > google.china.domain.smartdns.conf \
-            && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" apple.china.raw.txt > apple.china.domain.smartdns.conf 
+      run: |
+        cd /workdir/dnsmasq-china-list
+        make raw
+        sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" accelerated-domains.china.raw.txt > accelerated-domains.china.domain.smartdns.conf
+        sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" google.china.raw.txt > google.china.domain.smartdns.conf
+        sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode ping,tcp:80,tcp:443 -nameserver domestic -address -6 |" apple.china.raw.txt > apple.china.domain.smartdns.conf 
             
     - name: Compile apple_domains
       run: cd /workdir/dnsmasq-china-list && wget -qO- https://raw.githubusercontent.com/Loyalsoldier/domain-list-custom/refs/heads/release/apple.txt | grep -Ev "^#|^$" | sed -E 's/^(full:|domain:|keyword:|regexp:)//' | awk -F '@' '{print $1}' | sort -u > apple_domains.txt && sed -e "s|\(.*\)|domain-rules /\1/ -speed-check-mode tcp:80 -nameserver domestic |" apple_domains.txt > apple.domain.smartdns.conf
